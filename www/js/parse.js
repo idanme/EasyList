@@ -30,7 +30,15 @@ var getList = function ($scope) {
                     var productQuantity = results[i].get("productQuantity");
                     var productImage = results[i].get("productImage");
                     var productChecked = results[i].get("productChecked");
-                    categories[0].products.push(new Product(categoryName, productName, productQuantity, productImage, productChecked));
+                    if (listContent.hasOwnProperty(categoryName) === false)
+                    {
+                        listContent[categoryName] = {
+                            categoryName: categoryName,
+                            products: []
+                    };
+                    }
+                    listContent[categoryName].products.push(new Product(categoryName, productName, productQuantity, productImage, productChecked));
+                    //listContent[0].products.push(new Product(categoryName, productName, productQuantity, productImage, productChecked));
                     $scope.$apply();
                     console.log("Success");
                 }
