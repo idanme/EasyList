@@ -26,22 +26,17 @@ app.controller('ShoppingListController', function ($scope) {
         this.addProduct = function (productCategory, productName, productQuantity) {
             productQuantity = parseInt(productQuantity);
 
-            var indexOfCategory = findProduct(listContent, productCategory);
-
-            if (indexOfCategory !== -1) //if a category is alredy created
+            if (listContent.hasOwnProperty(productCategory) === true) //if a category is alredy created
             {
-                var indexOfProductName = findProduct(listContent[indexOfCategory].products, productName);
+                var products = listContent[productCategory].products;
+                var indexOfProductName = findProduct(products, productName);
                 if (indexOfProductName !== -1) //if a product is alredy in the list
                 {
-                    listContent[indexOfCategory].products[indexOfProductName].quantity += productQuantity;
+                    products[indexOfProductName].quantity += productQuantity;
                 }
                 else {
-                    listContent[indexOfCategory].products.push({
-                        name: productName,
-                        quantity: productQuantity,
-                        image: "./images/Product_basket.png",
-                        checked: false
-                    });
+                    products.push(new Product(productCategory, productName, productQuantity, productImage, false));
+                    //image: "./images/Product_basket.png",
                 }
             }
             else {
@@ -103,7 +98,7 @@ app.controller('ShoppingListController', function ($scope) {
             this.selectedProduct.categoryName = productCategory;
         };
 
-        //TODO make work with Parse
+//TODO make work with Parse
         this.removeSelectedProduct = function () {
             var categoriesList = this.listContent;
             for (var categoryIndex in categoriesList) {

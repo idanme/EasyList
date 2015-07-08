@@ -46,9 +46,9 @@
      Shopping List
     -->
     <div id="categories">
-        <ul id="{{category.name}}" data-role="listview" data-inset="true" ng-repeat="category in list.categories">
+        <ul id="{{category.categoryName}}" data-role="listview" data-inset="true" ng-repeat="category in list.listContent">
             <li data-role="list-divider" data-theme="b">
-                {{category.name}}
+                {{category.categoryName}}
                 <span class="ui-li-count">{{category.products.length}}</span>
             </li>
             <li>
@@ -128,11 +128,11 @@
         <p>Change/Add product photo.</p>
         <a href="index.html" id="choosePhoto" data-rel="back"
            class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-check ui-btn-icon-left ui-btn-inline ui-mini"
-           ng-click="list.changePhoto(list.selectedProduct)">Choose a photo from library
+           ng-click="list.changePhoto()">Choose a photo from library
         </a>
         <a href="index.html" id="takePhoto" data-rel="back"
            class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-camera ui-btn-icon-left ui-btn-inline ui-mini"
-           ng-click="list.takePhoto(list.selectedProduct)">Take a photo
+           ng-click="list.takePhoto()">Take a photo
         </a>
     </div>
 
