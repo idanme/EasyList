@@ -35,20 +35,18 @@ app.controller('ShoppingListController', function ($scope) {
                     products[indexOfProductName].quantity += productQuantity;
                 }
                 else {
+                    var productImage = "./images/Product_basket.png";
                     products.push(new Product(productCategory, productName, productQuantity, productImage, false));
                     //image: "./images/Product_basket.png",
                 }
             }
             else {
-                listContent.push({
-                    name: productCategory,
-                    products: [{
-                        name: productName,
-                        quantity: productQuantity,
-                        image: "./images/Product_basket.png",
-                        checked: false
-                    }]
-                });
+                listContent[productCategory] = {
+                    categoryName: productCategory,
+                    products: []
+                };
+
+                listContent[productCategory].products.push(new Product(productCategory,productName,productQuantity,productImage,false));
             }
 
             $("#addProductPopup").popup("close");
