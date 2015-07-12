@@ -98,18 +98,29 @@ app.controller('ShoppingListController', function ($scope) {
 
 //TODO make work with Parse
         this.removeSelectedProduct = function () {
-            var categoriesList = this.listContent;
-            for (var categoryIndex in categoriesList) {
-                var categoryName = listContent[categoryIndex].name;
-                var selectedProductCategoryName = this.selectedProduct.categoryName;
-
-                if (categoryName === selectedProductCategoryName) {
-                    var productsList = listContent[categoryIndex].products;
-                    var selectedProductName = this.selectedProduct.procutName;
-                    removeItemFromList(productsList, selectedProductName);
-                    deleteCategoryFromListIfEmpty(categoriesList, categoryIndex);
-                }
+            var categoryName = this.selectedProduct.categoryName;
+            var selectedProductName = this.selectedProduct.name;
+            if (this.listContent.hasOwnProperty(categoryName) === true)
+            {
+                var productsList = listContent[categoryName].products;
+                removeItemFromList(productsList, selectedProductName);
+                deleteCategoryFromListIfEmpty(this.listContent, categoryName);
             }
+
+
+
+            //var categoriesList = this.listContent;
+            //for (var categoryIndex in categoriesList) {
+            //    var categoryName = listContent[categoryIndex].name;
+            //    var selectedProductCategoryName = this.selectedProduct.categoryName;
+            //
+            //    if (categoryName === selectedProductCategoryName) {
+            //        var productsList = listContent[categoryIndex].products;
+            //        var selectedProductName = this.selectedProduct.procutName;
+            //        removeItemFromList(productsList, selectedProductName);
+            //        deleteCategoryFromListIfEmpty(categoriesList, categoryIndex);
+            //    }
+            //}
         };
 
         this.takePhoto = function () {
@@ -234,8 +245,8 @@ function removeItemFromList(list, item) {
 }
 
 //TODO fix with the new structure
-function deleteCategoryFromListIfEmpty(categoriesList, categoryIndex) {
-    if (categoriesList[categoryIndex].products.length === 0) {
-        categoriesList.splice(categoryIndex, 1);
+function deleteCategoryFromListIfEmpty(listContent, categoryName) {
+    if (listContent[categoryName].products.length === 0) {
+        delete listContent[categoryName];
     }
 }
