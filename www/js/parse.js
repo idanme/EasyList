@@ -7,7 +7,8 @@ var PARSE_JS = "YZnk7gzaQfcAlzLrc4UmTJHEyGXsbEq0wXi984DC";
 
 Parse.initialize(PARSE_APP, PARSE_JS);
 
-function Product(categoryName, productName, productQuantity, productImage, productChecked) {
+function Product(objectId, categoryName, productName, productQuantity, productImage, productChecked) {
+    this.objectId = objectId;
     this.categoryName = categoryName;
     this.productName = productName;
     this.productQuantity = productQuantity;
@@ -25,6 +26,7 @@ var getList = function ($scope) {
         {
             success: function (results) {
                 for (var i = 0, len = results.length; i < len; i++) {
+                    var objectId = results[i].get("objectId");
                     var categoryName = results[i].get("categoryName");
                     var productName = results[i].get("productName");
                     var productQuantity = results[i].get("productQuantity");
@@ -37,8 +39,7 @@ var getList = function ($scope) {
                             products: []
                     };
                     }
-                    listContent[categoryName].products.push(new Product(categoryName, productName, productQuantity, productImage, productChecked));
-                    //listContent[0].products.push(new Product(categoryName, productName, productQuantity, productImage, productChecked));
+                    listContent[categoryName].products.push(new Product(objectId, categoryName, productName, productQuantity, productImage, productChecked));
                     $scope.$apply();
                     console.log("Success");
                 }

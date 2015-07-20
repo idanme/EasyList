@@ -37,7 +37,6 @@ app.controller('ShoppingListController', function ($scope) {
                 else {
                     var productImage = "./images/Product_basket.png";
                     products.push(new Product(productCategory, productName, productQuantity, productImage, false));
-                    //image: "./images/Product_basket.png",
                 }
             }
             else {
@@ -76,6 +75,7 @@ app.controller('ShoppingListController', function ($scope) {
             }
         }
 
+        //TODO fix this with Parse
         this.itemClicked = function (product) {
             if (this.inEditMode === false) {
                 var elementClickedClassName = $(event.target).attr("class");
@@ -189,6 +189,7 @@ app.controller('ShoppingListController', function ($scope) {
             this.updateProductsQuantity();
         };
 
+//TODO make work with Parse
         this.updateProductsQuantity = function () {
             for (var categoryName in listContent) {
                 var products = listContent[categoryName].products;
