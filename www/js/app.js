@@ -78,15 +78,11 @@ app.controller('ShoppingListController', function ($scope) {
             this.selectedProduct = product;
         };
 
-//TODO make work with Parse
         this.removeSelectedProduct = function () {
             var categoryName = this.selectedProduct.categoryName;
-            var selectedProductName = this.selectedProduct.productName;
             if (this.listContent.hasOwnProperty(categoryName) === true)
             {
-                var productsList = listContent[categoryName].products;
-                removeItemFromList(productsList, selectedProductName);
-                deleteCategoryFromListIfEmpty(this.listContent, categoryName);
+                deleteProductFromParse(this.selectedProduct);
             }
         };
 
@@ -139,7 +135,7 @@ app.controller('ShoppingListController', function ($scope) {
                     }
                 }
             }
-        }
+        };
 
         this.takePhoto = function () {
             console.log("Take Photo!");
@@ -211,32 +207,31 @@ app.controller('ShoppingListController', function ($scope) {
                 else
                     return 'gear';
             }
-        }
+        };
     }
 );
 
 
-
-function findProduct(array, nameWeAreLookingFor) {
+function findProduct(array, productToRemove) {
     for (var i = 0; i < array.length; i++) {
-        if (array[i].productName === nameWeAreLookingFor) {
+        if (array[i].objectId === productToRemove.objectId) {
             return i;
         }
     }
     return -1;
 }
 
-//TODO fix with the new structure
-function removeItemFromList(list, item) {
-    var productIndex = findProduct(list, item);
+function removeProductFromList(listContent, productToRemove) {
+    var categoryName = productToRemove.categoryName;
+    var productsList = listContent[categoryName].products;
+    var productIndex = findProduct(productsList, productToRemove);
     if (productIndex != -1) {
-        var product = list[productIndex];
-        deleteProductFromParse(product);
-        list.splice(productIndex, 1);
+        productsList.splice(productIndex, 1);
+        deleteCategoryFromListIfEmpty(listContent, categoryName);
     }
+
 }
 
-//TODO fix with the new structure
 function deleteCategoryFromListIfEmpty(listContent, categoryName) {
     if (listContent[categoryName].products.length === 0) {
         delete listContent[categoryName];

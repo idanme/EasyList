@@ -53,7 +53,7 @@ var getList = function ($scope) {
     );
 }
 
-// TODO : List doesn't update automatically after adding new products
+// TODO : List doesn't update automatically after adding new products. Listview need to be refreshed.
 var addNewProductToParse = function (productToAdd) {
     Parse.initialize(PARSE_APP, PARSE_JS);
     ListContent = Parse.Object.extend("ListContent");
@@ -79,7 +79,7 @@ var addNewProductToParse = function (productToAdd) {
     });
 }
 
-// TODO : List doesn't update automatically after updating products
+// TODO : List doesn't update automatically after updating products. Listview need to be refreshed.
 var updateProductInParse = function (productToUpdate) {
     Parse.initialize(PARSE_APP, PARSE_JS);
     ListContent = Parse.Object.extend("ListContent");
@@ -98,13 +98,18 @@ var updateProductInParse = function (productToUpdate) {
     });
 }
 
+// TODO : Product doesn't delete automatically after deleting product. Listview need to be refreshed.
 var deleteProductFromParse = function (productToDelete) {
     Parse.initialize(PARSE_APP, PARSE_JS);
     ListContent = Parse.Object.extend("ListContent");
     var query = new Parse.Query(ListContent);
     query.get(productToDelete.objectId, {
         success: function(product) {
+            // Deleting the product from Parse
             product.destroy({});
+
+            // Deleting the product from listContent
+            removeProductFromList(listContent, productToDelete);
             console.log('Product with objectId ' + product.id + ' deleted successfully.');
         },
         error: function(product, error) {
