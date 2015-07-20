@@ -13,16 +13,11 @@ var app = angular.module('SmartShoppingList', []);
 app.controller('ShoppingListController', function ($scope) {
         this.listContent = listContent;
 
-        //TODO change it to be the product Class
-        this.selectedProduct = {
-            name: '',
-            categoryName: ''
-        };
+        this.selectedProduct;
         this.inEditMode = false;
 
         getList($scope);
 
-        //TODO fix this with Parse
         this.addProduct = function (productCategory, productName, productQuantity) {
             productQuantity = parseInt(productQuantity);
 
@@ -39,8 +34,7 @@ app.controller('ShoppingListController', function ($scope) {
 
         };
 
-        this.addNewProductToNewCategory = function (productCategory, productName, productQuantity)
-        {
+        this.addNewProductToNewCategory = function (productCategory, productName, productQuantity) {
             listContent[productCategory] = {
                 categoryName: productCategory,
                 products: []
@@ -50,13 +44,12 @@ app.controller('ShoppingListController', function ($scope) {
             addNewProductToParse(newProduct);
         };
 
-        this.addNewProductToExistingCategory = function (productCategory, productName, productQuantity)
-        {
+        this.addNewProductToExistingCategory = function (productCategory, productName, productQuantity) {
             var products = listContent[productCategory].products;
             var indexOfProductName = findProduct(products, productName);
             if (indexOfProductName !== -1) //if a product is already in the list
             {
-                //TODO fix this with Parse
+                //TODO fix this with Parse - Update the quantity in parse
                 products[indexOfProductName].quantity += productQuantity;
             }
             else {
@@ -66,29 +59,6 @@ app.controller('ShoppingListController', function ($scope) {
             }
         };
 
-        this.getTheme = function (product) {
-            if (this.inEditMode === true)
-                return 'g';
-            else {
-                if (product.productChecked === true)
-                    return 'f';
-                else
-                    return 'b';
-            }
-        };
-
-        this.getIcon = function (product) {
-            if (this.inEditMode === true)
-                return 'delete';
-            else {
-                if (product.productChecked === true)
-                    return 'check';
-                else
-                    return 'gear';
-            }
-        }
-
-        //TODO fix this with Parse
         this.itemClicked = function (product) {
             if (this.inEditMode === false) {
                 var elementClickedClassName = $(event.target).attr("class");
@@ -98,46 +68,27 @@ app.controller('ShoppingListController', function ($scope) {
                     $("#productImagePopUp").popup('open');
                 }
                 else {
-                    //product.productChecked = !product.productChecked;
                     updateProductInParse(product);
                 }
             }
 
         };
 
-        this.updateSelectedProduct = function (productName, productCategory) {
-            this.selectedProduct.name = productName;
-            this.selectedProduct.categoryName = productCategory;
+        this.updateSelectedProduct = function (product) {
+            this.selectedProduct = product;
         };
 
 //TODO make work with Parse
         this.removeSelectedProduct = function () {
             var categoryName = this.selectedProduct.categoryName;
-            var selectedProductName = this.selectedProduct.name;
+            var selectedProductName = this.selectedProduct.productName;
             if (this.listContent.hasOwnProperty(categoryName) === true)
             {
                 var productsList = listContent[categoryName].products;
                 removeItemFromList(productsList, selectedProductName);
                 deleteCategoryFromListIfEmpty(this.listContent, categoryName);
             }
-
-
-
-            //var categoriesList = this.listContent;
-            //for (var categoryIndex in categoriesList) {
-            //    var categoryName = listContent[categoryIndex].name;
-            //    var selectedProductCategoryName = this.selectedProduct.categoryName;
-            //
-            //    if (categoryName === selectedProductCategoryName) {
-            //        var productsList = listContent[categoryIndex].products;
-            //        var selectedProductName = this.selectedProduct.procutName;
-            //        removeItemFromList(productsList, selectedProductName);
-            //        deleteCategoryFromListIfEmpty(categoriesList, categoryIndex);
-            //    }
-            //}
         };
-
-
 
         this.editList = function () {
             this.addQuantityEditing();
@@ -239,6 +190,28 @@ app.controller('ShoppingListController', function ($scope) {
             }, function (err) {
             }, cameraOptions);
         };
+
+        this.getTheme = function (product) {
+            if (this.inEditMode === true)
+                return 'g';
+            else {
+                if (product.productChecked === true)
+                    return 'f';
+                else
+                    return 'b';
+            }
+        };
+
+        this.getIcon = function (product) {
+            if (this.inEditMode === true)
+                return 'delete';
+            else {
+                if (product.productChecked === true)
+                    return 'check';
+                else
+                    return 'gear';
+            }
+        }
     }
 );
 
@@ -257,6 +230,8 @@ function findProduct(array, nameWeAreLookingFor) {
 function removeItemFromList(list, item) {
     var productIndex = findProduct(list, item);
     if (productIndex != -1) {
+        var product = list[productIndex];
+        deleteProductFromParse(product);
         list.splice(productIndex, 1);
     }
 }

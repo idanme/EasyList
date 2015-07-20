@@ -42,7 +42,7 @@ var getList = function ($scope) {
                     var newProduct = new Product(objectId, categoryName, productName, productQuantity, productImage, productChecked);
                     listContent[categoryName].products.push(newProduct);
                     $scope.$apply();
-                    console.log("Success");
+                    console.log("New Product added with objectId: " + objectId);
                 }
             },
             error: function (error) {
@@ -53,6 +53,7 @@ var getList = function ($scope) {
     );
 }
 
+// TODO : List doesn't update automatically after adding new products
 var addNewProductToParse = function (productToAdd) {
     Parse.initialize(PARSE_APP, PARSE_JS);
     ListContent = Parse.Object.extend("ListContent");
@@ -78,6 +79,7 @@ var addNewProductToParse = function (productToAdd) {
     });
 }
 
+// TODO : List doesn't update automatically after updating products
 var updateProductInParse = function (productToUpdate) {
     Parse.initialize(PARSE_APP, PARSE_JS);
     ListContent = Parse.Object.extend("ListContent");
@@ -96,16 +98,13 @@ var updateProductInParse = function (productToUpdate) {
     });
 }
 
-var deleteProductInParse = function (productToDelete) {
+var deleteProductFromParse = function (productToDelete) {
     Parse.initialize(PARSE_APP, PARSE_JS);
     ListContent = Parse.Object.extend("ListContent");
     var query = new Parse.Query(ListContent);
-    query.equalTo("objectId", productToDelete.objectId);
-    query.first.destroy({
+    query.get(productToDelete.objectId, {
         success: function(product) {
-            productToUpdate.productChecked = !productToUpdate.productChecked;
-            product.set("productChecked", productToUpdate.productChecked);
-            product.save();
+            product.destroy({});
             console.log('Product with objectId ' + product.id + ' deleted successfully.');
         },
         error: function(product, error) {
