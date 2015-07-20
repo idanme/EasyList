@@ -26,31 +26,44 @@ app.controller('ShoppingListController', function ($scope) {
         this.addProduct = function (productCategory, productName, productQuantity) {
             productQuantity = parseInt(productQuantity);
 
-            if (listContent.hasOwnProperty(productCategory) === true) //if a category is alredy created
+            if (listContent.hasOwnProperty(productCategory) === true) //if a category is already created
             {
-                var products = listContent[productCategory].products;
-                var indexOfProductName = findProduct(products, productName);
-                if (indexOfProductName !== -1) //if a product is alredy in the list
-                {
-                    products[indexOfProductName].quantity += productQuantity;
-                }
-                else {
-                    var productImage = "./images/Product_basket.png";
-                    products.push(new Product(productCategory, productName, productQuantity, productImage, false));
-                }
+                this.addNewProductToExistingCategory(productCategory, productName, productQuantity);
             }
             else {
-                listContent[productCategory] = {
-                    categoryName: productCategory,
-                    products: []
-                };
-
-                listContent[productCategory].products.push(new Product(productCategory,productName,productQuantity,productImage,false));
+                this.addNewProductToNewCategory(productCategory, productName, productQuantity);
             }
 
             $("#addProductPopup").popup("close");
             $("#" + productCategory).listview();
 
+        };
+
+        this.addNewProductToNewCategory = function (productCategory, productName, productQuantity)
+        {
+            listContent[productCategory] = {
+                categoryName: productCategory,
+                products: []
+            };
+            var productImage = "./images/Product_basket.png";
+            var newProduct = new Product(null, productCategory, productName, productQuantity, productImage, false);
+            addNewProductToParse(newProduct);
+        };
+
+        this.addNewProductToExistingCategory = function (productCategory, productName, productQuantity)
+        {
+            var products = listContent[productCategory].products;
+            var indexOfProductName = findProduct(products, productName);
+            if (indexOfProductName !== -1) //if a product is already in the list
+            {
+                //TODO fix this with Parse
+                products[indexOfProductName].quantity += productQuantity;
+            }
+            else {
+                var productImage = "./images/Product_basket.png";
+                var newProduct = new Product(null, productCategory, productName, productQuantity, productImage, false);
+                addNewProductToParse(newProduct);
+            }
         };
 
         this.getTheme = function (product) {
@@ -85,7 +98,8 @@ app.controller('ShoppingListController', function ($scope) {
                     $("#productImagePopUp").popup('open');
                 }
                 else {
-                    product.productChecked = !product.productChecked;
+                    //product.productChecked = !product.productChecked;
+                    updateProductInParse(product);
                 }
             }
 
@@ -122,6 +136,59 @@ app.controller('ShoppingListController', function ($scope) {
             //    }
             //}
         };
+
+
+
+        this.editList = function () {
+            this.addQuantityEditing();
+        };
+
+        this.executeEditOrSaveFunction = function () {
+            if (this.inEditMode === true)
+                this.saveList();
+            else
+                this.editList();
+            this.inEditMode = !this.inEditMode;
+        };
+
+        this.saveList = function () {
+            this.updateProductsQuantity();
+        };
+
+//TODO make work with Parse
+        this.updateProductsQuantity = function () {
+            for (var categoryName in listContent) {
+                var products = listContent[categoryName].products;
+                for (var productIndex in products) {
+                    var productName = products[productIndex].productName;
+                    //var elementId = "quantity" + productName;
+                    if (products[productIndex].productChecked === false) {
+                        products[productIndex].productQuantity = $("#quantity" + productName + " input").val();
+                    }
+                }
+            }
+        };
+
+        this.addQuantityEditing = function () {
+            for (var categoryName in listContent) {
+                var products = listContent[categoryName].products;
+                for (var productIndex in products) {
+                    if (products[productIndex].productChecked === false) {
+                        var elementId = "quantity" + products[productIndex].productName;
+                        var productQuantity = products[productIndex].productQuantity;
+                        dpUI.numberPicker("#" + elementId, {
+                            min: 0,
+                            max: 100,
+                            step: 1,
+                            format: "",
+                            formatter: function (x) {
+                                return x;
+                            }
+                        }, productQuantity);
+                    }
+                }
+            }
+        }
 
         this.takePhoto = function () {
             console.log("Take Photo!");
@@ -172,57 +239,6 @@ app.controller('ShoppingListController', function ($scope) {
             }, function (err) {
             }, cameraOptions);
         };
-
-        this.editList = function () {
-            this.addQuantityEditing();
-        };
-
-        this.executeEditOrSaveFunction = function () {
-            if (this.inEditMode === true)
-                this.saveList();
-            else
-                this.editList();
-            this.inEditMode = !this.inEditMode;
-        }
-
-        this.saveList = function () {
-            this.updateProductsQuantity();
-        };
-
-//TODO make work with Parse
-        this.updateProductsQuantity = function () {
-            for (var categoryName in listContent) {
-                var products = listContent[categoryName].products;
-                for (var productIndex in products) {
-                    var productName = products[productIndex].productName;
-                    //var elementId = "quantity" + productName;
-                    if (products[productIndex].productChecked === false) {
-                        products[productIndex].productQuantity = $("#quantity" + productName + " input").val();
-                    }
-                }
-            }
-        };
-
-        this.addQuantityEditing = function () {
-            for (var categoryName in listContent) {
-                var products = listContent[categoryName].products;
-                for (var productIndex in products) {
-                    if (products[productIndex].productChecked === false) {
-                        var elementId = "quantity" + products[productIndex].productName;
-                        var productQuantity = products[productIndex].productQuantity;
-                        dpUI.numberPicker("#" + elementId, {
-                            min: 0,
-                            max: 100,
-                            step: 1,
-                            format: "",
-                            formatter: function (x) {
-                                return x;
-                            }
-                        }, productQuantity);
-                    }
-                }
-            }
-        }
     }
 );
 
