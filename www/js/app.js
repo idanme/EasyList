@@ -177,9 +177,9 @@ app.controller('ShoppingListController', function ($scope) {
 
             window.navigator.camera.getPicture(function (imageURI) {
                 product.productImage._url = "data:image/jpeg;base64," + imageURI;
-                var file = new Parse.File("test.jpg", {base64:product.productImage._url});
+                //var file = new Parse.File("test.jpg", {base64:product.productImage._url});
                 //console.log(product.productImage._url);
-                console.log(file);
+                //console.log(file);
                 $("#" + product.categoryName + " ." + product.productName + " .productImage").attr("src", product.productImage._url);
 
             }, function (err) {

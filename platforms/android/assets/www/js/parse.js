@@ -7,7 +7,8 @@ var PARSE_JS = "YZnk7gzaQfcAlzLrc4UmTJHEyGXsbEq0wXi984DC";
 
 Parse.initialize(PARSE_APP, PARSE_JS);
 
-function Product(categoryName, productName, productQuantity, productImage, productChecked) {
+function Product(objectId, categoryName, productName, productQuantity, productImage, productChecked) {
+    this.objectId = objectId;
     this.categoryName = categoryName;
     this.productName = productName;
     this.productQuantity = productQuantity;
@@ -25,6 +26,7 @@ var getList = function ($scope) {
         {
             success: function (results) {
                 for (var i = 0, len = results.length; i < len; i++) {
+                    var objectId = results[i].id;
                     var categoryName = results[i].get("categoryName");
                     var productName = results[i].get("productName");
                     var productQuantity = results[i].get("productQuantity");
@@ -35,12 +37,12 @@ var getList = function ($scope) {
                         listContent[categoryName] = {
                             categoryName: categoryName,
                             products: []
-                    };
+                        };
                     }
-                    listContent[categoryName].products.push(new Product(categoryName, productName, productQuantity, productImage, productChecked));
-                    //listContent[0].products.push(new Product(categoryName, productName, productQuantity, productImage, productChecked));
+                    var newProduct = new Product(objectId, categoryName, productName, productQuantity, productImage, productChecked);
+                    listContent[categoryName].products.push(newProduct);
                     $scope.$apply();
-                    console.log("Success");
+                    console.log("New Product added with objectId: " + objectId);
                 }
             },
             error: function (error) {
@@ -50,6 +52,73 @@ var getList = function ($scope) {
         }
     );
 }
+
+var addNewProductToParse = function ($scope, productToAdd) {
+    Parse.initialize(PARSE_APP, PARSE_JS);
+    ListContent = Parse.Object.extend("ListContent");
+    var parseListContent = new ListContent;
+
+    parseListContent.save({
+        categoryName: productToAdd.categoryName,
+        productName: productToAdd.productName,
+        productQuantity: productToAdd.productQuantity,
+        //TODO: productImage must be FILE and not STRING
+        //productImage: productToAdd.productImage,
+        productChecked: productToAdd.productChecked
+    }, {
+        success: function(product) {
+            var productCategory = productToAdd.categoryName;
+            productToAdd.objectId = product.id;
+            listContent[productCategory].products.push(productToAdd);
+            $scope.$apply();
+            console.log('New Product created with objectId: ' + product.id);
+        },
+        error: function(product, error) {
+            console.log('Failed to create new object, with error code: ' + error.message);
+        }
+    });
+}
+
+var updateProductInParse = function ($scope, productToUpdate) {
+    Parse.initialize(PARSE_APP, PARSE_JS);
+    ListContent = Parse.Object.extend("ListContent");
+    var query = new Parse.Query(ListContent);
+    query.equalTo("objectId", productToUpdate.objectId);
+    query.first({
+        success: function(product) {
+            productToUpdate.productChecked = !productToUpdate.productChecked;
+            product.set("productChecked", productToUpdate.productChecked);
+            product.save();
+            $scope.$apply();
+            console.log('Product with objectId ' + product.id + ' updated successfully.');
+        },
+        error: function(product, error) {
+            console.log('Failed to update object, with error code: ' + error.message);
+        }
+    });
+}
+
+var deleteProductFromParse = function ($scope, productToDelete) {
+    Parse.initialize(PARSE_APP, PARSE_JS);
+    ListContent = Parse.Object.extend("ListContent");
+    var query = new Parse.Query(ListContent);
+    query.get(productToDelete.objectId, {
+        success: function(product) {
+            // Deleting the product from Parse
+            product.destroy({});
+
+            // Deleting the product from listContent
+            removeProductFromList(listContent, productToDelete);
+            $scope.$apply();
+            console.log('Product with objectId ' + product.id + ' deleted successfully.');
+        },
+        error: function(product, error) {
+            console.log('Failed to delete object, with error code: ' + error.message);
+        }
+    });
+}
+
+
 
 
 
