@@ -41,7 +41,7 @@ app.controller('ShoppingListController', function ($scope) {
             };
             var productImage = "./images/Product_basket.png";
             var newProduct = new Product(null, productCategory, productName, productQuantity, productImage, false);
-            addNewProductToParse(newProduct);
+            addNewProductToParse($scope, newProduct);
         };
 
         this.addNewProductToExistingCategory = function (productCategory, productName, productQuantity) {
@@ -55,7 +55,7 @@ app.controller('ShoppingListController', function ($scope) {
             else {
                 var productImage = "./images/Product_basket.png";
                 var newProduct = new Product(null, productCategory, productName, productQuantity, productImage, false);
-                addNewProductToParse(newProduct);
+                addNewProductToParse($scope, newProduct);
             }
         };
 
@@ -68,7 +68,7 @@ app.controller('ShoppingListController', function ($scope) {
                     $("#productImagePopUp").popup('open');
                 }
                 else {
-                    updateProductInParse(product);
+                    updateProductInParse($scope, product);
                 }
             }
 
@@ -82,7 +82,7 @@ app.controller('ShoppingListController', function ($scope) {
             var categoryName = this.selectedProduct.categoryName;
             if (this.listContent.hasOwnProperty(categoryName) === true)
             {
-                deleteProductFromParse(this.selectedProduct);
+                deleteProductFromParse($scope, this.selectedProduct);
             }
         };
 
@@ -137,7 +137,7 @@ app.controller('ShoppingListController', function ($scope) {
             }
         };
 
-        this.takePhoto = function () {
+        this.takePhoto = function (product) {
             console.log("Take Photo!");
             var popover = new CameraPopoverOptions(300, 300, 100, 100, Camera.PopoverArrowDirection.ARROW_ANY);
             var cameraOptions = {
@@ -153,16 +153,14 @@ app.controller('ShoppingListController', function ($scope) {
             };
 
             window.navigator.camera.getPicture(function (imageURI) {
-                var productIndex = findProduct(listContent[selectedProduct.categoryName], selectedProduct.name);
-                var products = listContent[selectedProduct.categoryName].products;
-                products[productIndex].productImage._url = "data:image/jpeg;base64," + imageURI;
-                $("#" + this.selectedProduct.categoryName + " ." + this.selectedProduct.name + " .productImage").attr("src", products[productIndex].productImage._url);
+                product.productImage._url = "data:image/jpeg;base64," + imageURI;
+                $("#" + product.categoryName + " ." +product.productName + " .productImage").attr("src", product.productImage._url);
 
             }, function (err) {
             }, cameraOptions);
         };
 
-        this.changePhoto = function () {
+        this.changePhoto = function (product) {
             console.log("Change Photo!");
             var popover = new CameraPopoverOptions(300, 300, 100, 100, Camera.PopoverArrowDirection.ARROW_ANY);
             var cameraOptions = {
@@ -178,10 +176,11 @@ app.controller('ShoppingListController', function ($scope) {
             };
 
             window.navigator.camera.getPicture(function (imageURI) {
-                var productIndex = findProduct(listContent[selectedProduct.categoryName], selectedProduct.name);
-                var products = listContent[selectedProduct.categoryName].products;
-                products[productIndex].productImage._url = "data:image/jpeg;base64," + imageURI;
-                $("#" + this.selectedProduct.categoryName + " ." + this.selectedProduct.name + " .productImage").attr("src", products[productIndex].productImage._url);
+                product.productImage._url = "data:image/jpeg;base64," + imageURI;
+                var file = new Parse.File("test.jpg", {base64:product.productImage._url});
+                //console.log(product.productImage._url);
+                console.log(file);
+                $("#" + product.categoryName + " ." + product.productName + " .productImage").attr("src", product.productImage._url);
 
             }, function (err) {
             }, cameraOptions);

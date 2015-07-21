@@ -53,8 +53,7 @@ var getList = function ($scope) {
     );
 }
 
-// TODO : List doesn't update automatically after adding new products. Listview need to be refreshed.
-var addNewProductToParse = function (productToAdd) {
+var addNewProductToParse = function ($scope, productToAdd) {
     Parse.initialize(PARSE_APP, PARSE_JS);
     ListContent = Parse.Object.extend("ListContent");
     var parseListContent = new ListContent;
@@ -71,6 +70,7 @@ var addNewProductToParse = function (productToAdd) {
             var productCategory = productToAdd.categoryName;
             productToAdd.objectId = product.id;
             listContent[productCategory].products.push(productToAdd);
+            $scope.$apply();
             console.log('New Product created with objectId: ' + product.id);
         },
         error: function(product, error) {
@@ -79,8 +79,7 @@ var addNewProductToParse = function (productToAdd) {
     });
 }
 
-// TODO : List doesn't update automatically after updating products. Listview need to be refreshed.
-var updateProductInParse = function (productToUpdate) {
+var updateProductInParse = function ($scope, productToUpdate) {
     Parse.initialize(PARSE_APP, PARSE_JS);
     ListContent = Parse.Object.extend("ListContent");
     var query = new Parse.Query(ListContent);
@@ -90,6 +89,7 @@ var updateProductInParse = function (productToUpdate) {
             productToUpdate.productChecked = !productToUpdate.productChecked;
             product.set("productChecked", productToUpdate.productChecked);
             product.save();
+            $scope.$apply();
             console.log('Product with objectId ' + product.id + ' updated successfully.');
         },
         error: function(product, error) {
@@ -98,8 +98,7 @@ var updateProductInParse = function (productToUpdate) {
     });
 }
 
-// TODO : Product doesn't delete automatically after deleting product. Listview need to be refreshed.
-var deleteProductFromParse = function (productToDelete) {
+var deleteProductFromParse = function ($scope, productToDelete) {
     Parse.initialize(PARSE_APP, PARSE_JS);
     ListContent = Parse.Object.extend("ListContent");
     var query = new Parse.Query(ListContent);
@@ -110,6 +109,7 @@ var deleteProductFromParse = function (productToDelete) {
 
             // Deleting the product from listContent
             removeProductFromList(listContent, productToDelete);
+            $scope.$apply();
             console.log('Product with objectId ' + product.id + ' deleted successfully.');
         },
         error: function(product, error) {
