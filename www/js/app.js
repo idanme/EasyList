@@ -8,11 +8,14 @@ $.mobile.buttonMarkup.hoverDelay = 0;
 
 var listContent = new Object();
 var DEFAULT_PRODUCT_IMAGE = "http://files.parsetfss.com/64d6988d-576e-4edc-b686-e7a05d6ed73b/tfss-0e47eb91-7cd8-4206-b72f-010c63878c91-Product_basket.png";
+var PHOTO_LIBRARY = 0;
+var PHOTO_CAMERA = 1;
+
 var app = angular.module('SmartShoppingList', []);
 
 app.controller('ShoppingListController', function ($scope) {
+        kaki = $scope;
         this.listContent = listContent;
-
         this.selectedProduct;
         this.inEditMode = false;
 
@@ -30,11 +33,11 @@ app.controller('ShoppingListController', function ($scope) {
             }
 
             $("#addProductPopup").popup("close");
-            $("#" + productCategory).listview();
-
+            $scope.productCategory = "";
+            $scope.productName = "";
+            $scope.productQuantity = "";
         };
 
-        //TODO fix this with Parse - Update the image in parse
         this.addNewProductToNewCategory = function (productCategory, productName, productQuantity) {
             listContent[productCategory] = {
                 categoryName: productCategory,
@@ -45,7 +48,6 @@ app.controller('ShoppingListController', function ($scope) {
             addNewProductToParse($scope, newProduct);
         };
 
-        //TODO fix this with Parse - Update the image in parse
         this.addNewProductToExistingCategory = function (productCategory, productName, productQuantity) {
             var products = listContent[productCategory].products;
             var indexOfProductName = findProductByName(products, productName);
@@ -146,42 +148,27 @@ app.controller('ShoppingListController', function ($scope) {
             }
         };
 
-        this.takePhoto = function (product) {
+
+        this.changePhoto = function (product, photoType) {
             console.log("Take Photo!");
             var popover = new CameraPopoverOptions(300, 300, 100, 100, Camera.PopoverArrowDirection.ARROW_ANY);
             var cameraOptions = {
                 quality: 100,
                 destinationType: Camera.DestinationType.DATA_URL,
                 allowEdit: true,
-                sourceType: Camera.PictureSourceType.CAMERA,
+                sourceType: "",
                 encodingType: Camera.EncodingType.JPEG,
                 targetWidth: 500,
                 targetHeight: 500,
                 popoverOptions: popover,
                 saveToPhotoAlbum: true
             };
-            window.navigator.camera.getPicture(function (imageURI) {
-                changeProductPhotoInParse($scope, product, imageURI);
-            }, function (err) {
-                console.log("Camera Error");
-            }, cameraOptions);
-        };
-
-        this.changePhoto = function (product) {
-            console.log("Change Photo!");
-            var popover = new CameraPopoverOptions(300, 300, 100, 100, Camera.PopoverArrowDirection.ARROW_ANY);
-            var cameraOptions = {
-                quality: 100,
-                destinationType: Camera.DestinationType.DATA_URL,
-                allowEdit: true,
-                sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
-                encodingType: Camera.EncodingType.JPEG,
-                targetWidth: 500,
-                targetHeight: 500,
-                popoverOptions: popover,
-                saveToPhotoAlbum: true
-            };
-
+            if (photoType === PHOTO_CAMERA) {
+                cameraOptions.sourceType = Camera.PictureSourceType.CAMERA;
+            }
+            else {
+                cameraOptions.sourceType = Camera.PictureSourceType.PHOTOLIBRARY;
+            }
             window.navigator.camera.getPicture(function (imageURI) {
                 changeProductPhotoInParse($scope, product, imageURI);
             }, function (err) {
@@ -209,6 +196,19 @@ app.controller('ShoppingListController', function ($scope) {
                 else
                     return 'gear';
             }
+        };
+
+        this.showLoadingWidget = function() {
+            $.mobile.loading('show', {
+                text: 'Uploading Image...',
+                textVisible: true,
+                theme: 'a',
+                html: ""
+            });
+        };
+
+        this.hideLoadingWidget = function() {
+            $.mobile.loading('hide');
         };
 
 
@@ -241,7 +241,6 @@ function removeProductFromList(listContent, productToRemove) {
         productsList.splice(productIndex, 1);
         deleteCategoryFromListIfEmpty(listContent, categoryName);
     }
-
 }
 
 function deleteCategoryFromListIfEmpty(listContent, categoryName) {

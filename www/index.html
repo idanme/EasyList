@@ -128,11 +128,11 @@
         <p>Change/Add product photo.</p>
         <a href="index.html" id="choosePhoto" data-rel="back"
            class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-check ui-btn-icon-left ui-btn-inline ui-mini"
-           ng-click="list.changePhoto(list.selectedProduct)">Choose a photo from library
+           ng-click="list.changePhoto(list.selectedProduct, 0)">Choose a photo from library
         </a>
         <a href="index.html" id="takePhoto" data-rel="back"
            class="ui-shadow ui-btn ui-corner-all ui-btn-b ui-icon-camera ui-btn-icon-left ui-btn-inline ui-mini"
-           ng-click="list.takePhoto(list.selectedProduct)">Take a photo
+           ng-click="list.changePhoto(list.selectedProduct, 1)">Take a photo
         </a>
     </div>
 
