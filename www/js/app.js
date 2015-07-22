@@ -7,7 +7,7 @@
 $.mobile.buttonMarkup.hoverDelay = 0;
 
 var listContent = new Object();
-
+var DEFAULT_PRODUCT_IMAGE = "http://files.parsetfss.com/64d6988d-576e-4edc-b686-e7a05d6ed73b/tfss-0e47eb91-7cd8-4206-b72f-010c63878c91-Product_basket.png";
 var app = angular.module('SmartShoppingList', []);
 
 app.controller('ShoppingListController', function ($scope) {
@@ -40,7 +40,7 @@ app.controller('ShoppingListController', function ($scope) {
                 categoryName: productCategory,
                 products: []
             };
-            var productImage = "./images/Product_basket.png";
+            var productImage = DEFAULT_PRODUCT_IMAGE;
             var newProduct = new Product(null, productCategory, productName, productQuantity, productImage, false);
             addNewProductToParse($scope, newProduct);
         };
@@ -55,7 +55,7 @@ app.controller('ShoppingListController', function ($scope) {
                 updateProductQuantityInParse($scope, product, newProductQuantity);
             }
             else {
-                var productImage = "./images/Product_basket.png";
+                var productImage = DEFAULT_PRODUCT_IMAGE;
                 var newProduct = new Product(null, productCategory, productName, productQuantity, productImage, false);
                 addNewProductToParse($scope, newProduct);
             }
@@ -160,12 +160,10 @@ app.controller('ShoppingListController', function ($scope) {
                 popoverOptions: popover,
                 saveToPhotoAlbum: true
             };
-
             window.navigator.camera.getPicture(function (imageURI) {
-                product.productImage = "data:image/jpeg;base64," + imageURI;
-                $("#" + product.categoryName + " ." +product.productName + " .productImage").attr("src", product.productImage);
-
+                changeProductPhotoInParse($scope, product, imageURI);
             }, function (err) {
+                console.log("Camera Error");
             }, cameraOptions);
         };
 
@@ -185,14 +183,9 @@ app.controller('ShoppingListController', function ($scope) {
             };
 
             window.navigator.camera.getPicture(function (imageURI) {
-                //product.productImage._url = "data:image/jpeg;base64," + imageURI;
-                //var file = new Parse.File("test.jpg", {base64:product.productImage._url});
-                //console.log(product.productImage._url);
-                //console.log(file);
                 changeProductPhotoInParse($scope, product, imageURI);
-                //$("#" + product.categoryName + " ." + product.productName + " .productImage").attr("src", product.productImage._url);
-
             }, function (err) {
+                console.log("Camera Error");
             }, cameraOptions);
         };
 
@@ -217,6 +210,8 @@ app.controller('ShoppingListController', function ($scope) {
                     return 'gear';
             }
         };
+
+
     }
 );
 
