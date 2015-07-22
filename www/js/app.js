@@ -34,6 +34,7 @@ app.controller('ShoppingListController', function ($scope) {
 
         };
 
+        //TODO fix this with Parse - Update the image in parse
         this.addNewProductToNewCategory = function (productCategory, productName, productQuantity) {
             listContent[productCategory] = {
                 categoryName: productCategory,
@@ -44,13 +45,14 @@ app.controller('ShoppingListController', function ($scope) {
             addNewProductToParse($scope, newProduct);
         };
 
+        //TODO fix this with Parse - Update the image in parse
         this.addNewProductToExistingCategory = function (productCategory, productName, productQuantity) {
             var products = listContent[productCategory].products;
-            var indexOfProductName = findProduct(products, productName);
-            if (indexOfProductName !== -1) //if a product is already in the list
-            {
+            var indexOfProductName = findProductByName(products, productName);
+            if (indexOfProductName !== -1) { //if a product is already in the list
                 //TODO fix this with Parse - Update the quantity in parse
-                products[indexOfProductName].quantity += productQuantity;
+                updateProductQuantityInParse($scope, products[indexOfProductName]);
+                //products[indexOfProductName].productQuantity += productQuantity;
             }
             else {
                 var productImage = "./images/Product_basket.png";
@@ -68,10 +70,13 @@ app.controller('ShoppingListController', function ($scope) {
                     $("#productImagePopUp").popup('open');
                 }
                 else {
-                    updateProductInParse($scope, product);
+                    toggleProductCheckedInParse($scope, product);
                 }
             }
+        };
 
+        this.toggleProductChecked = function(product) {
+            product.productChecked = !product.productChecked;
         };
 
         this.updateSelectedProduct = function (product) {
@@ -102,18 +107,21 @@ app.controller('ShoppingListController', function ($scope) {
             this.updateProductsQuantity();
         };
 
-//TODO make work with Parse
         this.updateProductsQuantity = function () {
             for (var categoryName in listContent) {
                 var products = listContent[categoryName].products;
                 for (var productIndex in products) {
-                    var productName = products[productIndex].productName;
-                    //var elementId = "quantity" + productName;
-                    if (products[productIndex].productChecked === false) {
-                        products[productIndex].productQuantity = $("#quantity" + productName + " input").val();
+                    var product = products[productIndex];
+                    if (product.productChecked === false) {
+                        updateProductQuantityInParse($scope, product);
                     }
                 }
             }
+        };
+
+        this.updateProductQuantity = function (productToUpdate) {
+            var productName = productToUpdate.productName;
+            productToUpdate.productQuantity = $("#quantity" + productName + " input").val();
         };
 
         this.addQuantityEditing = function () {
@@ -210,10 +218,18 @@ app.controller('ShoppingListController', function ($scope) {
     }
 );
 
-
-function findProduct(array, productToRemove) {
+function findProductByName(array, productName) {
     for (var i = 0; i < array.length; i++) {
-        if (array[i].objectId === productToRemove.objectId) {
+        if (array[i].productName === productName) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+function findProduct(array, product) {
+    for (var i = 0; i < array.length; i++) {
+        if (array[i].objectId === product.objectId) {
             return i;
         }
     }
