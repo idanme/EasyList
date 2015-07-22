@@ -34,6 +34,7 @@ app.controller('ShoppingListController', function ($scope) {
 
         };
 
+        //TODO fix this with Parse - Update the image in parse
         this.addNewProductToNewCategory = function (productCategory, productName, productQuantity) {
             listContent[productCategory] = {
                 categoryName: productCategory,
@@ -44,13 +45,14 @@ app.controller('ShoppingListController', function ($scope) {
             addNewProductToParse($scope, newProduct);
         };
 
+        //TODO fix this with Parse - Update the image in parse
         this.addNewProductToExistingCategory = function (productCategory, productName, productQuantity) {
             var products = listContent[productCategory].products;
-            var indexOfProductName = findProduct(products, productName);
-            if (indexOfProductName !== -1) //if a product is already in the list
-            {
-                //TODO fix this with Parse - Update the quantity in parse
-                products[indexOfProductName].quantity += productQuantity;
+            var indexOfProductName = findProductByName(products, productName);
+            if (indexOfProductName !== -1) { //if a product is already in the list
+                var product = products[indexOfProductName];
+                var newProductQuantity = product.productQuantity + productQuantity;
+                updateProductQuantityInParse($scope, product, newProductQuantity);
             }
             else {
                 var productImage = "./images/Product_basket.png";
@@ -63,15 +65,18 @@ app.controller('ShoppingListController', function ($scope) {
             if (this.inEditMode === false) {
                 var elementClickedClassName = $(event.target).attr("class");
                 if (elementClickedClassName === "productImage") {
-                    $(".popphoto").attr("src", product.productImage._url);
+                    $(".popphoto").attr("src", product.productImage);
                     $(".popphoto").attr("alt", product.productName);
                     $("#productImagePopUp").popup('open');
                 }
                 else {
-                    updateProductInParse($scope, product);
+                    toggleProductCheckedInParse($scope, product);
                 }
             }
+        };
 
+        this.toggleProductChecked = function(product) {
+            product.productChecked = !product.productChecked;
         };
 
         this.updateSelectedProduct = function (product) {
@@ -102,18 +107,22 @@ app.controller('ShoppingListController', function ($scope) {
             this.updateProductsQuantity();
         };
 
-//TODO make work with Parse
         this.updateProductsQuantity = function () {
             for (var categoryName in listContent) {
                 var products = listContent[categoryName].products;
                 for (var productIndex in products) {
-                    var productName = products[productIndex].productName;
-                    //var elementId = "quantity" + productName;
-                    if (products[productIndex].productChecked === false) {
-                        products[productIndex].productQuantity = $("#quantity" + productName + " input").val();
+                    var product = products[productIndex];
+                    var newProductQuantity = parseInt($("#quantity" + product.productName + " input").val());
+                    if (product.productChecked === false) {
+                        updateProductQuantityInParse($scope, product, newProductQuantity);
                     }
                 }
             }
+        };
+
+        this.updateProductQuantity = function (productToUpdate) {
+            var productName = productToUpdate.productName;
+            productToUpdate.productQuantity = $("#quantity" + productName + " input").val();
         };
 
         this.addQuantityEditing = function () {
@@ -153,8 +162,8 @@ app.controller('ShoppingListController', function ($scope) {
             };
 
             window.navigator.camera.getPicture(function (imageURI) {
-                product.productImage._url = "data:image/jpeg;base64," + imageURI;
-                $("#" + product.categoryName + " ." +product.productName + " .productImage").attr("src", product.productImage._url);
+                product.productImage = "data:image/jpeg;base64," + imageURI;
+                $("#" + product.categoryName + " ." +product.productName + " .productImage").attr("src", product.productImage);
 
             }, function (err) {
             }, cameraOptions);
@@ -176,11 +185,12 @@ app.controller('ShoppingListController', function ($scope) {
             };
 
             window.navigator.camera.getPicture(function (imageURI) {
-                product.productImage._url = "data:image/jpeg;base64," + imageURI;
+                //product.productImage._url = "data:image/jpeg;base64," + imageURI;
                 //var file = new Parse.File("test.jpg", {base64:product.productImage._url});
                 //console.log(product.productImage._url);
                 //console.log(file);
-                $("#" + product.categoryName + " ." + product.productName + " .productImage").attr("src", product.productImage._url);
+                changeProductPhotoInParse($scope, product, imageURI);
+                //$("#" + product.categoryName + " ." + product.productName + " .productImage").attr("src", product.productImage._url);
 
             }, function (err) {
             }, cameraOptions);
@@ -210,10 +220,18 @@ app.controller('ShoppingListController', function ($scope) {
     }
 );
 
-
-function findProduct(array, productToRemove) {
+function findProductByName(array, productName) {
     for (var i = 0; i < array.length; i++) {
-        if (array[i].objectId === productToRemove.objectId) {
+        if (array[i].productName === productName) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+function findProduct(array, product) {
+    for (var i = 0; i < array.length; i++) {
+        if (array[i].objectId === product.objectId) {
             return i;
         }
     }

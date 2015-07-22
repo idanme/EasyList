@@ -56,7 +56,7 @@
                     ng-repeat="product in category.products">
                     <li class='{{product.productName}} done-{{product.productChecked}}' data-icon="{{list.getIcon(product)}}">
                         <a ng-click="list.itemClicked(product)">
-                            <img class="productImage" src="{{product.productImage._url}}" alt="{{product.productName}}">
+                            <img class="productImage" src="{{product.productImage}}" alt="{{product.productName}}">
 
                             <!-- If not in edit mode-->
                             <div ng-show=!list.inEditMode>

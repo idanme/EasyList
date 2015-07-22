@@ -55,8 +55,8 @@ var getList = function ($scope) {
 
 var addNewProductToParse = function ($scope, productToAdd) {
     Parse.initialize(PARSE_APP, PARSE_JS);
-    ListContent = Parse.Object.extend("ListContent");
-    var parseListContent = new ListContent;
+    var ListContent = Parse.Object.extend("ListContent");
+    var parseListContent = new ListContent();
 
     parseListContent.save({
         categoryName: productToAdd.categoryName,
@@ -81,7 +81,7 @@ var addNewProductToParse = function ($scope, productToAdd) {
 
 var toggleProductCheckedInParse = function ($scope, productToUpdate) {
     Parse.initialize(PARSE_APP, PARSE_JS);
-    ListContent = Parse.Object.extend("ListContent");
+    var ListContent = Parse.Object.extend("ListContent");
     var query = new Parse.Query(ListContent);
     query.equalTo("objectId", productToUpdate.objectId);
     query.first({
@@ -105,7 +105,7 @@ var toggleProductCheckedInParse = function ($scope, productToUpdate) {
 
 var updateProductQuantityInParse = function ($scope, productToUpdate, newProductQuantity) {
     Parse.initialize(PARSE_APP, PARSE_JS);
-    ListContent = Parse.Object.extend("ListContent");
+    var ListContent = Parse.Object.extend("ListContent");
     var query = new Parse.Query(ListContent);
     query.equalTo("objectId", productToUpdate.objectId);
     query.first({
@@ -128,7 +128,7 @@ var updateProductQuantityInParse = function ($scope, productToUpdate, newProduct
 
 var deleteProductFromParse = function ($scope, productToDelete) {
     Parse.initialize(PARSE_APP, PARSE_JS);
-    ListContent = Parse.Object.extend("ListContent");
+    var ListContent = Parse.Object.extend("ListContent");
     var query = new Parse.Query(ListContent);
     query.get(productToDelete.objectId, {
         success: function(product) {
@@ -147,7 +147,29 @@ var deleteProductFromParse = function ($scope, productToDelete) {
     });
 }
 
+var changeProductPhotoInParse = function($scope, product, imageURI)
+{
+    Parse.initialize(PARSE_APP, PARSE_JS);
 
 
+
+    var file = new Parse.File(product.productName + ".jpg", {base64:imageURI});
+    globalFile = file;
+    globalProduct = product;
+    file.save().then(function() {
+        // The file has been saved to Parse.
+        product.productImage = file.url();
+        $scope.$apply();
+    }, function(error) {
+        // The file either could not be read, or could not be saved to Parse.
+        console.log("Error saving photo");
+    });
+
+
+
+}
+
+var globalFile;
+var globalProduct;
 
 

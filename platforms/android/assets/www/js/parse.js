@@ -55,8 +55,8 @@ var getList = function ($scope) {
 
 var addNewProductToParse = function ($scope, productToAdd) {
     Parse.initialize(PARSE_APP, PARSE_JS);
-    ListContent = Parse.Object.extend("ListContent");
-    var parseListContent = new ListContent;
+    var ListContent = Parse.Object.extend("ListContent");
+    var parseListContent = new ListContent();
 
     parseListContent.save({
         categoryName: productToAdd.categoryName,
@@ -79,16 +79,21 @@ var addNewProductToParse = function ($scope, productToAdd) {
     });
 }
 
-var updateProductInParse = function ($scope, productToUpdate) {
+var toggleProductCheckedInParse = function ($scope, productToUpdate) {
     Parse.initialize(PARSE_APP, PARSE_JS);
-    ListContent = Parse.Object.extend("ListContent");
+    var ListContent = Parse.Object.extend("ListContent");
     var query = new Parse.Query(ListContent);
     query.equalTo("objectId", productToUpdate.objectId);
     query.first({
         success: function(product) {
-            productToUpdate.productChecked = !productToUpdate.productChecked;
-            product.set("productChecked", productToUpdate.productChecked);
+            // Get the new value of product checked
+            var productChecked = !productToUpdate.productChecked;
+            // Update the new product checked value in parse
+            product.set("productChecked", productChecked);
             product.save();
+            // Update the new product checked value in listContent
+            productToUpdate.productChecked = productChecked;
+
             $scope.$apply();
             console.log('Product with objectId ' + product.id + ' updated successfully.');
         },
@@ -98,9 +103,32 @@ var updateProductInParse = function ($scope, productToUpdate) {
     });
 }
 
+var updateProductQuantityInParse = function ($scope, productToUpdate, newProductQuantity) {
+    Parse.initialize(PARSE_APP, PARSE_JS);
+    var ListContent = Parse.Object.extend("ListContent");
+    var query = new Parse.Query(ListContent);
+    query.equalTo("objectId", productToUpdate.objectId);
+    query.first({
+        success: function(product) {
+            // Update the new quantity in parse
+            product.set("productQuantity", newProductQuantity);
+            product.save();
+
+            // Update the new quantity in the listContent
+            productToUpdate.productQuantity = newProductQuantity;
+
+            $scope.$apply();
+            console.log('Product with objectId ' + product.id + ' quantity updated successfully.');
+        },
+        error: function(product, error) {
+            console.log('Failed to update object, with error code: ' + error.message);
+        }
+    });
+}
+
 var deleteProductFromParse = function ($scope, productToDelete) {
     Parse.initialize(PARSE_APP, PARSE_JS);
-    ListContent = Parse.Object.extend("ListContent");
+    var ListContent = Parse.Object.extend("ListContent");
     var query = new Parse.Query(ListContent);
     query.get(productToDelete.objectId, {
         success: function(product) {
@@ -109,6 +137,7 @@ var deleteProductFromParse = function ($scope, productToDelete) {
 
             // Deleting the product from listContent
             removeProductFromList(listContent, productToDelete);
+
             $scope.$apply();
             console.log('Product with objectId ' + product.id + ' deleted successfully.');
         },
@@ -118,7 +147,25 @@ var deleteProductFromParse = function ($scope, productToDelete) {
     });
 }
 
+var changeProductPhotoInParse = function($scope, product, imageURI)
+{
+    var file = new Parse.File(product.productName + ".jpg", {base64:imageURI});
+    globalFile = file;
+    globalProduct = product;
+    file.save().then(function() {
+        // The file has been saved to Parse.
+        product.productImage = file.url();
+        $scope.$apply();
+    }, function(error) {
+        // The file either could not be read, or could not be saved to Parse.
+        console.log("Error saving photo");
+    });
 
 
+
+}
+
+var globalFile;
+var globalProduct;
 
 

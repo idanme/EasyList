@@ -65,7 +65,7 @@ app.controller('ShoppingListController', function ($scope) {
             if (this.inEditMode === false) {
                 var elementClickedClassName = $(event.target).attr("class");
                 if (elementClickedClassName === "productImage") {
-                    $(".popphoto").attr("src", product.productImage._url);
+                    $(".popphoto").attr("src", product.productImage);
                     $(".popphoto").attr("alt", product.productName);
                     $("#productImagePopUp").popup('open');
                 }
@@ -162,8 +162,8 @@ app.controller('ShoppingListController', function ($scope) {
             };
 
             window.navigator.camera.getPicture(function (imageURI) {
-                product.productImage._url = "data:image/jpeg;base64," + imageURI;
-                $("#" + product.categoryName + " ." +product.productName + " .productImage").attr("src", product.productImage._url);
+                product.productImage = "data:image/jpeg;base64," + imageURI;
+                $("#" + product.categoryName + " ." +product.productName + " .productImage").attr("src", product.productImage);
 
             }, function (err) {
             }, cameraOptions);
@@ -185,11 +185,12 @@ app.controller('ShoppingListController', function ($scope) {
             };
 
             window.navigator.camera.getPicture(function (imageURI) {
-                product.productImage._url = "data:image/jpeg;base64," + imageURI;
+                //product.productImage._url = "data:image/jpeg;base64," + imageURI;
                 //var file = new Parse.File("test.jpg", {base64:product.productImage._url});
                 //console.log(product.productImage._url);
                 //console.log(file);
-                $("#" + product.categoryName + " ." + product.productName + " .productImage").attr("src", product.productImage._url);
+                changeProductPhotoInParse($scope, product, imageURI);
+                //$("#" + product.categoryName + " ." + product.productName + " .productImage").attr("src", product.productImage._url);
 
             }, function (err) {
             }, cameraOptions);
