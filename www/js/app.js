@@ -50,9 +50,9 @@ app.controller('ShoppingListController', function ($scope) {
             var products = listContent[productCategory].products;
             var indexOfProductName = findProductByName(products, productName);
             if (indexOfProductName !== -1) { //if a product is already in the list
-                //TODO fix this with Parse - Update the quantity in parse
-                updateProductQuantityInParse($scope, products[indexOfProductName]);
-                //products[indexOfProductName].productQuantity += productQuantity;
+                var product = products[indexOfProductName];
+                var newProductQuantity = product.productQuantity + productQuantity;
+                updateProductQuantityInParse($scope, product, newProductQuantity);
             }
             else {
                 var productImage = "./images/Product_basket.png";
@@ -112,8 +112,9 @@ app.controller('ShoppingListController', function ($scope) {
                 var products = listContent[categoryName].products;
                 for (var productIndex in products) {
                     var product = products[productIndex];
+                    var newProductQuantity = parseInt($("#quantity" + product.productName + " input").val());
                     if (product.productChecked === false) {
-                        updateProductQuantityInParse($scope, product);
+                        updateProductQuantityInParse($scope, product, newProductQuantity);
                     }
                 }
             }

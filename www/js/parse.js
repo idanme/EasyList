@@ -110,11 +110,10 @@ var updateProductQuantityInParse = function ($scope, productToUpdate, newProduct
     query.equalTo("objectId", productToUpdate.objectId);
     query.first({
         success: function(product) {
-            // Get the new quantity
-            var newProductQuantity =  parseInt($("#quantity" + productToUpdate.productName + " input").val());
             // Update the new quantity in parse
             product.set("productQuantity", newProductQuantity);
             product.save();
+
             // Update the new quantity in the listContent
             productToUpdate.productQuantity = newProductQuantity;
 
