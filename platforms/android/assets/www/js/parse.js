@@ -5,7 +5,33 @@
 var PARSE_APP = "d4eaDwYlkds7SajkbBzoedmbOnCS5SzY8ioZ8FQV";
 var PARSE_JS = "YZnk7gzaQfcAlzLrc4UmTJHEyGXsbEq0wXi984DC";
 
-Parse.initialize(PARSE_APP, PARSE_JS);
+//(function() {
+//    Parse.initialize(PARSE_APP, PARSE_JS);
+//
+//    window.fbAsyncInit = function () {
+//        Parse.FacebookUtils.init({ // this line replaces FB.init({
+//            appId: '1060741983939011', // Facebook App ID
+//            status: true,  // check Facebook Login status
+//            cookie: true,  // enable cookies to allow Parse to access the session
+//            xfbml: true,  // initialize Facebook social plugins on the page
+//            version: 'v2.4' // point to the latest Facebook Graph API version
+//        });
+//
+//
+//    };
+//
+//    (function (d, s, id) {
+//        var js, fjs = d.getElementsByTagName(s)[0];
+//        if (d.getElementById(id)) {
+//            return;
+//        }
+//        js = d.createElement(s);
+//        js.id = id;
+//        js.src = "https://connect.facebook.net/en_US/sdk.js";
+//        fjs.parentNode.insertBefore(js, fjs);
+//    }(document, 'script', 'facebook-jssdk'));
+//})();
+
 
 function Product(objectId, categoryName, productName, productQuantity, productImage, productChecked) {
     this.objectId = objectId;
@@ -18,8 +44,7 @@ function Product(objectId, categoryName, productName, productQuantity, productIm
 
 var getList = function ($scope) {
     Parse.initialize(PARSE_APP, PARSE_JS);
-    ListContent = Parse.Object.extend("ListContent");
-
+    var ListContent = Parse.Object.extend("ListContent");
     var query = new Parse.Query(ListContent);
 
     query.find(
@@ -152,6 +177,7 @@ var changeProductPhotoInParse = function($scope, productToUpdate, imageURI)
     Parse.initialize(PARSE_APP, PARSE_JS);
 
     var file = new Parse.File(productToUpdate.productName + ".jpg", {base64:imageURI});
+    $scope.list.showLoadingWidget();
     file.save().then(function() {
         // The file has been saved to Parse.
         getProductFromParse(productToUpdate,function(productFromParse){
@@ -159,6 +185,7 @@ var changeProductPhotoInParse = function($scope, productToUpdate, imageURI)
             productFromParse.save().then(function(){
                 productToUpdate.productImage = file.url();
                 $scope.$apply();
+                $scope.list.hideLoadingWidget();
             });
         })
     }, function(error) {
@@ -182,6 +209,38 @@ var getProductFromParse = function (productToQuery, callBack)
         }
     });
 }
+var kaki;
+var facebookLogin = function ()
+{
+    facebookConnectPlugin.login(["user_about_me"],
+        function(result){
+            console.log(result);
+            var facebookAuthData = {
 
+                "id": result.authResponse["userID"],
+                "access_token": result.authResponse["accessToken"],
+                "expiration_date": result.authResponse["expiresIn"].slice(0, -1).replace("+", ".")+"Z"
+            }
+            console.log(facebookAuthData);
+        },
+        function () {
+            alert ("error");
+        }
+    );
+
+
+    //Parse.FacebookUtils.logIn(null, {
+    //    success: function(user) {
+    //        if (!user.existed()) {
+    //            alert("User signed up and logged in through Facebook!");
+    //        } else {
+    //            alert("User logged in through Facebook!");
+    //        }
+    //    },
+    //    error: function(user, error) {
+    //        alert("User cancelled the Facebook login or did not fully authorize.");
+    //    }
+    //});
+}
 
 

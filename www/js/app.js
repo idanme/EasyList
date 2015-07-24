@@ -211,6 +211,11 @@ app.controller('ShoppingListController', function ($scope) {
             $.mobile.loading('hide');
         };
 
+        this.login = function ()
+        {
+            facebookLogin();
+        }
+
 
     }
 );
