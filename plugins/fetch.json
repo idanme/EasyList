@@ -17,13 +17,23 @@
     },
     "com.phonegap.plugins.facebookconnect": {
         "source": {
-            "type": "registry",
-            "id": "com.phonegap.plugins.facebookconnect"
+            "type": "git",
+            "url": "https://github.com/Wizcorp/phonegap-facebook-plugin.git",
+            "subdir": "."
         },
         "is_top_level": true,
         "variables": {
             "APP_ID": "1060741983939011",
             "APP_NAME": "Easy List"
         }
+    },
+    "com.phonegap.parsepushplugin": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/taivo/parse-push-plugin",
+            "subdir": "."
+        },
+        "is_top_level": true,
+        "variables": {}
     }
 }

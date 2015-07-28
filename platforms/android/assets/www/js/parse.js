@@ -214,9 +214,7 @@ var facebookLogin = function ()
 {
     facebookConnectPlugin.login(["user_about_me"],
         function(result){
-            console.log(result);
             var facebookAuthData = {
-
                 "id": result.authResponse["userID"],
                 "access_token": result.authResponse["accessToken"],
                 "expiration_date": result.authResponse["expiresIn"].slice(0, -1).replace("+", ".")+"Z"
