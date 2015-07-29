@@ -214,31 +214,38 @@ var facebookLogin = function ()
 {
     facebookConnectPlugin.login(["user_about_me"],
         function(result){
+            var expirationDate = new Date();
+            expirationDate.setSeconds(result.authResponse["expiresIn"]);
             var facebookAuthData = {
                 "id": result.authResponse["userID"],
                 "access_token": result.authResponse["accessToken"],
-                "expiration_date": result.authResponse["expiresIn"].slice(0, -1).replace("+", ".")+"Z"
+                "expiration_date": expirationDate
             }
             console.log(facebookAuthData);
+            loginToParse(facebookAuthData);
         },
         function () {
             alert ("error");
         }
     );
-
-
-    //Parse.FacebookUtils.logIn(null, {
-    //    success: function(user) {
-    //        if (!user.existed()) {
-    //            alert("User signed up and logged in through Facebook!");
-    //        } else {
-    //            alert("User logged in through Facebook!");
-    //        }
-    //    },
-    //    error: function(user, error) {
-    //        alert("User cancelled the Facebook login or did not fully authorize.");
-    //    }
-    //});
 }
 
+var loginToParse = function (facebookAuthData)
+{
+    Parse.initialize(PARSE_APP, PARSE_JS);
+    Parse.FacebookUtils.logIn(facebookAuthData, {
+
+        success: function(_user) {
+            kaki = _user;
+            console.log(_user);
+            console.log("User is logged into Parse");
+        },
+
+        error: function(error1, error2){
+            console.log("Unable to create/login to as Facebook user");
+            console.log("  ERROR1 = "+JSON.stringify(error1));
+            console.log("  ERROR2 = "+JSON.stringify(error2));
+        }
+    });
+}
 
