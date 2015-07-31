@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-var app = {
+var init = {
     // Application Constructor
     initialize: function() {
         this.bindEvents();
@@ -33,19 +33,14 @@ var app = {
     // The scope of 'this' is the event. In order to call the 'receivedEvent'
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
-        app.receivedEvent('deviceready');
+        ParsePushPlugin.register({
+                appId:"d4eaDwYlkds7SajkbBzoedmbOnCS5SzY8ioZ8FQV", clientKey:"EgTpZJmHrKShmsrLkqzn7orAQP4oH9QgBlnTMqwK", eventKey:"myEventKey"}, //will trigger receivePN[pnObj.myEventKey]
+            function() {
+                alert('successfully registered device!');
+            }, function(e) {
+                alert('error registering device: ' + e);
+            });
     },
-    // Update DOM on a Received Event
-    receivedEvent: function(id) {
-        var parentElement = document.getElementById(id);
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
-
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
-
-        console.log('Received Event: ' + id);
-    }
 };
 
-app.initialize();
+init.initialize();

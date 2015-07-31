@@ -2,8 +2,10 @@
  * Created by oslander on 05/07/2015.
  */
 
-var PARSE_APP = "d4eaDwYlkds7SajkbBzoedmbOnCS5SzY8ioZ8FQV";
-var PARSE_JS = "YZnk7gzaQfcAlzLrc4UmTJHEyGXsbEq0wXi984DC";
+//var PARSE_APP = "d4eaDwYlkds7SajkbBzoedmbOnCS5SzY8ioZ8FQV";
+var PARSE_APP = "YNiKFOkpulbY1j19E2gcdSREgTKd0AiZZKtzJaeg"; //EasyList2
+//var PARSE_JS = "YZnk7gzaQfcAlzLrc4UmTJHEyGXsbEq0wXi984DC";
+var PARSE_JS = "Ht7VpNFFhB6KKod4L8gvWlyzjwWt0PEPXjEHVD1H"; //EasyList2
 
 //(function() {
 //    Parse.initialize(PARSE_APP, PARSE_JS);
@@ -209,10 +211,9 @@ var getProductFromParse = function (productToQuery, callBack)
         }
     });
 }
-var kaki;
 var facebookLogin = function ()
 {
-    facebookConnectPlugin.login(["user_about_me"],
+    facebookConnectPlugin.login(["user_about_me","email"],
         function(result){
             var expirationDate = new Date();
             expirationDate.setSeconds(result.authResponse["expiresIn"]);
@@ -236,7 +237,6 @@ var loginToParse = function (facebookAuthData)
     Parse.FacebookUtils.logIn(facebookAuthData, {
 
         success: function(_user) {
-            kaki = _user;
             console.log(_user);
             console.log("User is logged into Parse");
         },

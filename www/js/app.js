@@ -219,20 +219,11 @@ app.controller('ShoppingListController', function ($scope) {
 
         this.register = function()
         {
-            ParsePushPlugin.register({eventKey:"myEventKey",appId:"d4eaDwYlkds7SajkbBzoedmbOnCS5SzY8ioZ8FQV", clientKey:"EgTpZJmHrKShmsrLkqzn7orAQP4oH9QgBlnTMqwK"}, //will trigger receivePN[pnObj.myEventKey]
+            ParsePushPlugin.register({
+                    //appId:"McfhScnqoqzGb3sEYIuqvzdhD7orBXtaNEtijvQN", clientKey:"MXvPYbYZgZtwgcbI6728THXbji4AfNlzCoT9NpGz", eventKey:"myEventKey"}, //will trigger receivePN[pnObj.myEventKey]
+                    appId:"YNiKFOkpulbY1j19E2gcdSREgTKd0AiZZKtzJaeg", clientKey:"wV1lOSJJWBlvQhvQYISlKyGlFiolEaXMsbOaMD7I", eventKey:"myEventKey"}, //will trigger receivePN[pnObj.myEventKey]
                 function() {
                     alert('successfully registered device!');
-                    if(window.ParsePushPlugin){
-                        ParsePushPlugin.on('receivePN', function(pn){
-                            alert('yo i got this push notification:' + JSON.stringify(pn));
-                        });
-
-                        //
-                        //you can also listen to your own custom subevents if you registered eventKey
-                        //
-                        //ParsePushPlugin.on('receivePN:chat', chatEventHandler);
-                        //ParsePushPlugin.on('receivePN:serverMaintenance', serverMaintenanceHandler);
-                    }
                 }, function(e) {
                     alert('error registering device: ' + e);
                 });

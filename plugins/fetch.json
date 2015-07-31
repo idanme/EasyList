@@ -18,7 +18,7 @@
     "com.phonegap.plugins.facebookconnect": {
         "source": {
             "type": "local",
-            "path": "C:\\Users\\oslander\\Desktop\\phonegap-facebook-plugin-master"
+            "path": "D:\\Users\\Idan\\Dropbox\\Shares\\Idan and Niv\\Final Project\\Working plugins\\phonegap-facebook-plugin-master"
         },
         "is_top_level": true,
         "variables": {
@@ -29,7 +29,7 @@
     "com.phonegap.parsepushplugin": {
         "source": {
             "type": "local",
-            "path": "C:\\Users\\oslander\\Desktop\\parse-push-plugin-master"
+            "path": "D:\\Users\\Idan\\Dropbox\\Shares\\Idan and Niv\\Final Project\\Working plugins\\parse-push-plugin-master"
         },
         "is_top_level": true,
         "variables": {}

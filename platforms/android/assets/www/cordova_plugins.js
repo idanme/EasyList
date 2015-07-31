@@ -8,6 +8,13 @@ module.exports = [
         ]
     },
     {
+        "file": "plugins/com.phonegap.plugins.facebookconnect/facebookConnectPlugin.js",
+        "id": "com.phonegap.plugins.facebookconnect.FacebookConnectPlugin",
+        "clobbers": [
+            "facebookConnectPlugin"
+        ]
+    },
+    {
         "file": "plugins/cordova-plugin-camera/www/CameraConstants.js",
         "id": "cordova-plugin-camera.Camera",
         "clobbers": [
@@ -45,6 +52,7 @@ module.exports.metadata =
 // TOP OF METADATA
 {
     "com.phonegap.parsepushplugin": "0.5.0",
+    "com.phonegap.plugins.facebookconnect": "0.11.0",
     "cordova-plugin-camera": "1.2.0",
     "cordova-plugin-whitelist": "1.0.0"
 }
